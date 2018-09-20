@@ -16,7 +16,7 @@ final class ViewController: UIViewController, ARSCNViewDelegate, UIGestureRecogn
     }()
 
     @IBOutlet var sceneView: ARSCNView!
-    var planes: [PlaneNode] = []
+    var planes: [ARPlaneAnchor: PlaneNode] = [:]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -62,23 +62,17 @@ final class ViewController: UIViewController, ARSCNViewDelegate, UIGestureRecogn
         // scneView上の位置を取得
         let results = sceneView.hitTest(tapPoint, types: .existingPlaneUsingExtent)
 
-        guard let hitResult = results.first else { return }
-
+        guard let hitResult = results.first, let hitPlaneAnchor = hitResult.anchor as? ARPlaneAnchor, let planeNode = planes[hitPlaneAnchor] else { return }
         // 箱を生成
-        let cube = SCNBox(width: 0.1, height: 0.1, length: 0.1, chamferRadius: 0)
-        let cubeNode = SCNNode(geometry: cube)
+        let panelNode = PanelNode(material: .otaoA)
 
-        // 箱の判定を追加
-        let cubeShape = SCNPhysicsShape(geometry: cube, options: nil)
-        cubeNode.physicsBody = SCNPhysicsBody(type: .dynamic, shape: cubeShape)
+        let audioSouce = SCNAudioSource(named: "summon.wav")
+        panelNode.runAction(SCNAction.playAudio(audioSouce!, waitForCompletion: true))
 
         // sceneView上のタップ座標のどこに箱を出現させるかを指定
-        cubeNode.position = SCNVector3Make(hitResult.worldTransform.columns.3.x,
-                                           hitResult.worldTransform.columns.3.y + 0.1,
-                                           hitResult.worldTransform.columns.3.z)
-
+        panelNode.position.y += Float(PanelNode.Size.height / 2)
         // ノードを追加
-        sceneView.scene.rootNode.addChildNode(cubeNode)
+        planeNode.addChildNode(panelNode)
     }
 
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
@@ -86,14 +80,13 @@ final class ViewController: UIViewController, ARSCNViewDelegate, UIGestureRecogn
         guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
         let plane = PlaneNode(anchor: planeAnchor)
         node.addChildNode(plane)
-        planes.append(plane)
-
+        planes[planeAnchor] = plane
     }
 
     func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
         guard let planeAnchor = anchor as? ARPlaneAnchor else {fatalError()}
-        let willRenderedPlane = planes.filter {$0.id == anchor.identifier}
-        willRenderedPlane.forEach { $0.update(anchor: planeAnchor) }
+        let willRenderedPlane = planes[planeAnchor]
+        willRenderedPlane?.update(anchor: planeAnchor)
     }
 
     func session(_ session: ARSession, didFailWithError error: Error) {
