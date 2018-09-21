@@ -18,7 +18,7 @@ final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
 
     private enum AlphaRange {
         static let min: CGFloat = 0.4
-        static let max: CGFloat = 0.9
+        static let max: CGFloat = 1.0
     }
 
     private var previousOffset: CGFloat = 0
@@ -70,8 +70,7 @@ final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
             state = offset > 0 ? .closing : .opening
             if !(previousState == .opened && state == .opening) && !(previousState == .closed && state == .closing){
                 transform = transform.translatedBy(x: 0, y: move)
-                // alpha 0.6 ~~ 0.9 を 0.0 ~~ superview.frame.height にマッピングしたい
-                alpha -= move / superview.frame.height
+                alpha -= move / superview.frame.height * 1.2
             }
         default:
             break
@@ -95,6 +94,7 @@ final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
                 frame.origin.y = (superview.frame.height) * 0.1
                 self.frame = frame
                 self.alpha = AlphaRange.max
+                self.backgroundColor = .white
                 self.state = .opened
             })
         case .closing, .opened:
@@ -103,6 +103,7 @@ final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
                 frame.origin.y = (superview.frame.height) * 0.8
                 self.self.frame = frame
                 self.alpha = AlphaRange.min
+                self.backgroundColor = .black
                 self.state = .closed
             })
         }
