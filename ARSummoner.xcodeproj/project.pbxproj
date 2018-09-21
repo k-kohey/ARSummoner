@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		1B757EC021530508000B13D6 /* summon.wav in Resources */ = {isa = PBXBuildFile; fileRef = 1B757EBF21530508000B13D6 /* summon.wav */; };
 		1B757EC2215422B4000B13D6 /* PanelNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B757EC1215422B4000B13D6 /* PanelNode.swift */; };
+		1B757EC82154823F000B13D6 /* InteractiveTransitionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B757EC72154823F000B13D6 /* InteractiveTransitionView.swift */; };
 		1B9B9A592152F6D30001747D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B9B9A582152F6D30001747D /* AppDelegate.swift */; };
 		1B9B9A5B2152F6D30001747D /* art.scnassets in Resources */ = {isa = PBXBuildFile; fileRef = 1B9B9A5A2152F6D30001747D /* art.scnassets */; };
 		1B9B9A5D2152F6D30001747D /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B9B9A5C2152F6D30001747D /* ViewController.swift */; };
@@ -21,6 +22,7 @@
 /* Begin PBXFileReference section */
 		1B757EBF21530508000B13D6 /* summon.wav */ = {isa = PBXFileReference; lastKnownFileType = audio.wav; path = summon.wav; sourceTree = "<group>"; };
 		1B757EC1215422B4000B13D6 /* PanelNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelNode.swift; sourceTree = "<group>"; };
+		1B757EC72154823F000B13D6 /* InteractiveTransitionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = InteractiveTransitionView.swift; sourceTree = "<group>"; };
 		1B9B9A552152F6D30001747D /* ARSummoner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ARSummoner.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		1B9B9A582152F6D30001747D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		1B9B9A5A2152F6D30001747D /* art.scnassets */ = {isa = PBXFileReference; lastKnownFileType = wrapper.scnassets; path = art.scnassets; sourceTree = "<group>"; };
@@ -67,6 +69,7 @@
 				1B9B9A6C2152F7FC0001747D /* PlaneNode.swift */,
 				1B9B9A5A2152F6D30001747D /* art.scnassets */,
 				1B9B9A5C2152F6D30001747D /* ViewController.swift */,
+				1B757EC72154823F000B13D6 /* InteractiveTransitionView.swift */,
 				1B757EC1215422B4000B13D6 /* PanelNode.swift */,
 				1B9B9A5E2152F6D30001747D /* Main.storyboard */,
 				1B9B9A612152F6D90001747D /* Assets.xcassets */,
@@ -150,6 +153,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				1B757EC2215422B4000B13D6 /* PanelNode.swift in Sources */,
+				1B757EC82154823F000B13D6 /* InteractiveTransitionView.swift in Sources */,
 				1B9B9A5D2152F6D30001747D /* ViewController.swift in Sources */,
 				1B9B9A6D2152F7FC0001747D /* PlaneNode.swift in Sources */,
 				1B9B9A592152F6D30001747D /* AppDelegate.swift in Sources */,
