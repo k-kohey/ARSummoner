@@ -8,31 +8,46 @@
 
 import SceneKit
 
-class PanelNode: SCNNode {
+enum PanelType {
+    case otaoA
+    case zozoOssan
 
-    enum ImageType {
-        case otaoA
-        case ossan
-
-        var image: UIImage {
-            switch self {
-            case .otaoA:
-                return UIImage(named: "otao")!
-            case .ossan:
-                return UIImage(named: "otao")!
-            }
+    var image: UIImage {
+        switch self {
+        case .otaoA:
+            return UIImage(named: "otao")!
+        case .zozoOssan:
+            return UIImage(named: "zozoOssan")!
         }
     }
 
-    enum Size {
-        static let height: CGFloat = 1.76
-        static let width: CGFloat = 1.76  * (127 / 262) // アスペクト比
+    var size: CGSize {
+        switch self {
+        case .otaoA:
+            return CGSize(width: 1.76  * (127 / 262), height: 1.76)
+        case .zozoOssan:
+            return CGSize(width: 1.76  * (1296 / 3910), height: 1.76)
+        }
     }
 
-    init(material: ImageType) {
-        super.init()
+    var resultSound: SCNAudioSource {
+        switch self {
+        case .otaoA:
+            return SCNAudioSource(named: "summon.wav")!
+        case .zozoOssan:
+            return SCNAudioSource(named: "hello.m4a")!
+        }
+    }
 
-        let panelNode = SCNNode(geometry: SCNBox(width: Size.width, height: Size.height, length: 0.001, chamferRadius: 0))
+    static var allCases: [PanelType] {
+        return [.otaoA, .zozoOssan]
+    }
+}
+
+final class PanelNode: SCNNode {
+    init(material: PanelType) {
+        super.init()
+        let panelNode = SCNNode(geometry: SCNBox(width: material.size.width, height: material.size.height, length: 0.001, chamferRadius: 0))
 
         let material_front = SCNMaterial()
         material_front.diffuse.contents = material.image

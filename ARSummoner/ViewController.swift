@@ -93,11 +93,7 @@ extension ViewController: UIGestureRecognizerDelegate {
 
         guard let hitResult = results.first, let hitPlaneAnchor = hitResult.anchor as? ARPlaneAnchor, let planeNode = planes[hitPlaneAnchor] else { return }
 
-        let panelNode = PanelNode(material: .otaoA)
-
-        let audioSouce = SCNAudioSource(named: "summon.wav")
-        panelNode.runAction(SCNAction.playAudio(audioSouce!, waitForCompletion: true))
-        panelNode.position.y += Float(PanelNode.Size.height / 2)
+        let panelNode = PanelFactory.create()
         planeNode.addChildNode(panelNode)
     }
 }
