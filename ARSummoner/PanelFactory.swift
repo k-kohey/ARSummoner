@@ -9,6 +9,11 @@
 import SceneKit
 
 enum PanelFactory {
+    static func prepare() {
+        // あらかじめ生成してprivateなプロパティに持たせとく
+        // createはcloneしたものを返す．
+    }
+
     static func create() -> PanelNode{
         let allCases = PanelType.allCases
         let random = arc4random_uniform(UInt32(allCases.count))

@@ -10,7 +10,7 @@ import UIKit
 
 final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
     lazy var titleLabel: UILabel = {
-        let label = UILabel(frame: CGRect(x: 25, y: 25, width: frame.width, height: 24))
+        let label = UILabel(frame: CGRect(x: 25, y: 35, width: frame.width, height: 24))
         label.font = UIFont.systemFont(ofSize: 24, weight: .bold)
         label.textColor = .white
         label.adjustsFontSizeToFitWidth = true
@@ -25,7 +25,7 @@ final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
         label.textColor = .white
         label.adjustsFontSizeToFitWidth = true
         label.numberOfLines = -1
-        label.frame = CGRect(x: 25, y: 55,
+        label.frame = CGRect(x: 25, y: 65,
                              width: frame.width, height: 40)
 
         let LineSpaceStyle = NSMutableParagraphStyle()
@@ -66,6 +66,14 @@ final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
         return gesture
     }()
 
+    private lazy var handleView: HandleView = {
+        let view = HandleView()
+        view.center = center
+        view.frame.origin.y = 10.0
+        return view
+
+    }()
+
 
     convenience init() {
         self.init(frame: .zero)
@@ -78,6 +86,7 @@ final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
 
         addSubview(titleLabel)
         addSubview(descriptionLabel)
+        addSubview(handleView)
 
         alpha = AlphaRange.min
         layer.cornerRadius = 17.0

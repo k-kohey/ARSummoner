@@ -19,6 +19,7 @@
 		1B9B9A6D2152F7FC0001747D /* PlaneNode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1B9B9A6C2152F7FC0001747D /* PlaneNode.swift */; };
 		1BB620412155B7A300D6DB48 /* PanelFactory.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BB620402155B7A300D6DB48 /* PanelFactory.swift */; };
 		1BB620432155C0E500D6DB48 /* hello.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 1BB620422155C0E500D6DB48 /* hello.m4a */; };
+		1BB620452155CC9D00D6DB48 /* HandleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BB620442155CC9D00D6DB48 /* HandleView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -36,6 +37,7 @@
 		1B9B9A6C2152F7FC0001747D /* PlaneNode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaneNode.swift; sourceTree = "<group>"; };
 		1BB620402155B7A300D6DB48 /* PanelFactory.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PanelFactory.swift; sourceTree = "<group>"; };
 		1BB620422155C0E500D6DB48 /* hello.m4a */ = {isa = PBXFileReference; lastKnownFileType = file; path = hello.m4a; sourceTree = "<group>"; };
+		1BB620442155CC9D00D6DB48 /* HandleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HandleView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,6 +76,7 @@
 				1B9B9A6C2152F7FC0001747D /* PlaneNode.swift */,
 				1B9B9A5A2152F6D30001747D /* art.scnassets */,
 				1B9B9A5C2152F6D30001747D /* ViewController.swift */,
+				1BB620442155CC9D00D6DB48 /* HandleView.swift */,
 				1B757EC72154823F000B13D6 /* InteractiveTransitionView.swift */,
 				1B757EC1215422B4000B13D6 /* PanelNode.swift */,
 				1BB620402155B7A300D6DB48 /* PanelFactory.swift */,
@@ -161,6 +164,7 @@
 			files = (
 				1B757EC2215422B4000B13D6 /* PanelNode.swift in Sources */,
 				1BB620412155B7A300D6DB48 /* PanelFactory.swift in Sources */,
+				1BB620452155CC9D00D6DB48 /* HandleView.swift in Sources */,
 				1B757EC82154823F000B13D6 /* InteractiveTransitionView.swift in Sources */,
 				1B9B9A5D2152F6D30001747D /* ViewController.swift in Sources */,
 				1B9B9A6D2152F7FC0001747D /* PlaneNode.swift in Sources */,
