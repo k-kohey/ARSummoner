@@ -7,10 +7,10 @@
 //
 
 import ARKit
-import ReactorKit
-import RxSwift
 
-final class ViewController: UIViewController, StoryboardView{
+typealias Planes = [ARPlaneAnchor: PlaneNode]
+
+final class ViewController: UIViewController{
     private lazy var tapPlaneGestuer: UITapGestureRecognizer = {
         let gestuer = UITapGestureRecognizer(target: self, action: #selector(didTappedScreen(_:)))
         gestuer.delegate = self
@@ -26,10 +26,30 @@ final class ViewController: UIViewController, StoryboardView{
         return view
     }()
     
-    var disposeBag = DisposeBag()
+    private struct Phase {
+        enum Phase: Int, CaseIterable {
+            case detection
+            case summons
+            case takePhoto
+        }
+        
+        static var action: [Phase: ()->()] = [:]
+        
+        static var current: Phase = .detection
+        
+        static func next() {
+            let allPhase = Phase.allCases
+            current = allPhase[(current.rawValue + 1) % allPhase.count]
+            action[current]?()
+        }
+        
+        static func setAction(for phase: Phase, action: @escaping () -> ()) {
+            self.action[phase] = action
+        }
+    }
 
     @IBOutlet var sceneView: ARSCNView!
-    private var planes: [ARPlaneAnchor: PlaneNode] = [:]
+    private var planes: Planes = [:]
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -43,6 +63,28 @@ final class ViewController: UIViewController, StoryboardView{
 
         view.addGestureRecognizer(tapPlaneGestuer)
         view.addSubview(instructionView)
+        
+        Phase.setAction(for: .detection) { [weak self] in
+            DispatchQueue.main.async {
+                let contents: DisplayContents = (title: "召喚場所を選定", description: "端末を平な場所で横に振って\n召喚する領域<<ゲート>>をみつけよう")
+                self?.instructionView.setDisplayContents(contents)
+                
+            }
+        }
+        
+        Phase.setAction(for: .summons) { [weak self] in
+            DispatchQueue.main.async {
+                let contents: DisplayContents = (title: "召喚を開始する", description: "地面に現れた召喚ゲートをタップして\n召喚を開始してみよう！！")
+                self?.instructionView.setDisplayContents(contents)
+            }
+        }
+        
+        Phase.setAction(for: .takePhoto) { [weak self] in
+            DispatchQueue.main.async {
+                let contents: DisplayContents = (title: "さあ，写真を撮ろう", description: "召喚成功を祝福し，その瞬間をフレームに残そう\n撮影した写真はSNSでシェア出来るよ．")
+                self?.instructionView.setDisplayContents(contents)
+            }
+        }
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -57,19 +99,16 @@ final class ViewController: UIViewController, StoryboardView{
         super.viewWillDisappear(animated)
         sceneView.session.pause()
     }
-    
-    func bind(reactor: ViewReactor) {
-        
-    }
 }
 
 extension ViewController: ARSCNViewDelegate {
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
-        // Place content only for anchors found by plane detection.
+        if Phase.current != .detection { return }
         guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
         let plane = PlaneNode(anchor: planeAnchor)
         node.addChildNode(plane)
         planes[planeAnchor] = plane
+        Phase.next()
     }
     
     func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
@@ -96,6 +135,7 @@ extension ViewController: ARSCNViewDelegate {
 
 extension ViewController: UIGestureRecognizerDelegate {
     @objc func didTappedScreen(_ recognizer: UITapGestureRecognizer) {
+        if Phase.current != .summons { return }
         let tapPoint = recognizer.location(in: sceneView)
         let results = sceneView.hitTest(tapPoint, types: .existingPlaneUsingExtent)
 
@@ -103,5 +143,6 @@ extension ViewController: UIGestureRecognizerDelegate {
 
         let panelNode = PanelFactory.create()
         planeNode.addChildNode(panelNode)
+        Phase.next()
     }
 }

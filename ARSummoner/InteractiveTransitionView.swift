@@ -8,8 +8,10 @@
 
 import UIKit
 
+typealias DisplayContents = (title: String, description: String)
+
 final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
-    lazy var titleLabel: UILabel = {
+    private lazy var titleLabel: UILabel = {
         let label = UILabel(frame: CGRect(x: 25, y: 35, width: frame.width, height: 24))
         label.font = UIFont.systemFont(ofSize: 24, weight: .bold)
         label.textColor = .white
@@ -19,7 +21,7 @@ final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
         return label
     }()
 
-    lazy var descriptionLabel: UILabel = {
+    private lazy var descriptionLabel: UILabel = {
         let label = UILabel()
         label.font = UIFont.systemFont(ofSize: 13, weight: .regular)
         label.textColor = .white
@@ -37,7 +39,7 @@ final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
         return label
     }()
 
-    var labels: [UILabel] = []
+    private var labels: [UILabel] = []
 
     private enum State {
         case opened
@@ -94,7 +96,7 @@ final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
     }
 
 
-    @objc func didTappedHandle(_ recognizer: UITapGestureRecognizer) {
+    @objc private func didTappedHandle(_ recognizer: UITapGestureRecognizer) {
         switch state {
         case .opened, .closing:
             translate(to: .closed)
@@ -103,7 +105,7 @@ final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
         }
     }
 
-    @objc func didPaneddHandle(_ recognizer: UIPanGestureRecognizer) {
+    @objc private func didPaneddHandle(_ recognizer: UIPanGestureRecognizer) {
         guard let superview = superview else {return}
         let offset = recognizer.translation(in: self).y
         switch recognizer.state {
@@ -161,8 +163,9 @@ final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
     required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-}
-
-extension UIColor {
-
+    
+    func setDisplayContents(_ contents: DisplayContents) {
+        titleLabel.text = contents.title
+        descriptionLabel.text = contents.description
+    }
 }
