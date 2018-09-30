@@ -45,6 +45,9 @@ final class ViewController: UIViewController{
         
         static func setAction(for phase: Phase, action: @escaping () -> ()) {
             self.action[phase] = action
+            
+            // if initial state, run
+            phase.rawValue == 0 ? action() : ()
         }
     }
 
@@ -66,7 +69,7 @@ final class ViewController: UIViewController{
         
         Phase.setAction(for: .detection) { [weak self] in
             DispatchQueue.main.async {
-                let contents: DisplayContents = (title: "召喚場所を選定", description: "端末を平な場所で横に振って\n召喚する領域<<ゲート>>をみつけよう")
+                let contents: DisplayContents = (title: "召喚場所を選定", description: "端末を平な場所で横に振って\n召喚する領域<<ゲート>>をみつけよう.\nいい場所にゲートが出来たらタップ！")
                 self?.instructionView.setDisplayContents(contents)
                 
             }
@@ -108,10 +111,10 @@ extension ViewController: ARSCNViewDelegate {
         let plane = PlaneNode(anchor: planeAnchor)
         node.addChildNode(plane)
         planes[planeAnchor] = plane
-        Phase.next()
     }
     
     func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
+        if Phase.current != .detection { return }
         guard let planeAnchor = anchor as? ARPlaneAnchor else {fatalError()}
         let willRenderedPlane = planes[planeAnchor]
         willRenderedPlane?.update(anchor: planeAnchor)
@@ -135,14 +138,19 @@ extension ViewController: ARSCNViewDelegate {
 
 extension ViewController: UIGestureRecognizerDelegate {
     @objc func didTappedScreen(_ recognizer: UITapGestureRecognizer) {
-        if Phase.current != .summons { return }
-        let tapPoint = recognizer.location(in: sceneView)
-        let results = sceneView.hitTest(tapPoint, types: .existingPlaneUsingExtent)
-
-        guard let hitResult = results.first, let hitPlaneAnchor = hitResult.anchor as? ARPlaneAnchor, let planeNode = planes[hitPlaneAnchor] else { return }
-
-        let panelNode = PanelFactory.create()
-        planeNode.addChildNode(panelNode)
-        Phase.next()
+        if Phase.current == .takePhoto { return }
+        switch Phase.current {
+        case .detection:
+            Phase.next()
+        case .summons:
+            let tapPoint = recognizer.location(in: sceneView)
+            let results = sceneView.hitTest(tapPoint, types: .existingPlaneUsingExtent)
+            guard let hitResult = results.first, let hitPlaneAnchor = hitResult.anchor as? ARPlaneAnchor, let planeNode = planes[hitPlaneAnchor] else { return }
+            let panelNode = PanelFactory.create()
+            planeNode.addChildNode(panelNode)
+            Phase.next()
+        case .takePhoto:
+            return
+        }
     }
 }
