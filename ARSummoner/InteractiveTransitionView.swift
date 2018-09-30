@@ -41,7 +41,7 @@ final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
 
     private var labels: [UILabel] = []
 
-    private enum State {
+    enum State {
         case opened
         case opening
         case closing
@@ -134,7 +134,7 @@ final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
         }
     }
 
-    private func translate(to state: State) {
+    func translate(to state: State) {
         guard let superview = superview else {return}
         var frame = self.frame
         switch state {

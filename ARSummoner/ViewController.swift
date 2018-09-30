@@ -102,6 +102,29 @@ final class ViewController: UIViewController{
         super.viewWillDisappear(animated)
         sceneView.session.pause()
     }
+    
+    private func takePhoto() {
+        UIImageWriteToSavedPhotosAlbum(sceneView.snapshot(),
+                                       self,
+                                       #selector(self.didFinishSavingImage(_:didFinishSavingWithError:contextInfo:)),
+                                       nil)
+    }
+    
+    @objc func didFinishSavingImage(_ image: UIImage, didFinishSavingWithError error: NSError!, contextInfo: UnsafeMutableRawPointer) {
+        
+        // 結果によって出すアラートを変更する
+        var title = "保存完了！"
+        var message = "カメラロールに保存しました\nSNSでシェアしますか？？"
+        
+        if error != nil {
+            title = "エラー"
+            message = "保存に失敗しました"
+        }
+        
+        let alertController = UIAlertController(title: title, message: message, preferredStyle: .alert)
+        alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+        self.present(alertController, animated: true, completion: nil)
+    }
 }
 
 extension ViewController: ARSCNViewDelegate {
@@ -138,7 +161,7 @@ extension ViewController: ARSCNViewDelegate {
 
 extension ViewController: UIGestureRecognizerDelegate {
     @objc func didTappedScreen(_ recognizer: UITapGestureRecognizer) {
-        if Phase.current == .takePhoto { return }
+        //if Phase.current == .takePhoto { return }
         switch Phase.current {
         case .detection:
             Phase.next()
@@ -150,6 +173,8 @@ extension ViewController: UIGestureRecognizerDelegate {
             planeNode.addChildNode(panelNode)
             Phase.next()
         case .takePhoto:
+            takePhoto()
+            Phase.next()
             return
         }
     }
