@@ -15,17 +15,7 @@ extension UIColor {
 }
 
 final class PlaneNode: SCNNode {
-    let id: UUID
-    var state: State
-
-    enum State {
-        case willUpdate
-        case fixed
-    }
-
     init(anchor: ARPlaneAnchor) {
-        id = anchor.identifier
-        state = .willUpdate
         super.init()
         geometry = SCNBox(width: CGFloat(anchor.extent.x),
                           height: 0.00000000001,
@@ -40,10 +30,6 @@ final class PlaneNode: SCNNode {
     }
 
     func update(anchor: ARPlaneAnchor) {
-        if state == .fixed {
-            return
-        }
-
         guard let geometry = geometry as? SCNBox else { assert(true); return }
         let newWidth = CGFloat(anchor.extent.x)
         let newLength = CGFloat(anchor.extent.z)

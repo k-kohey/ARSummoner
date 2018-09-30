@@ -46,6 +46,7 @@ final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
         case opening
         case closing
         case closed
+        case exit
     }
 
     private enum AlphaRange {
@@ -102,6 +103,7 @@ final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
             translate(to: .closed)
         case .opening, .closed:
             translate(to: .opened)
+        default: break
         }
     }
 
@@ -156,7 +158,17 @@ final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
                 self.labels.forEach { $0.textColor = .white }
                 self.state = .closed
             })
-        default: break
+        case .exit:
+            UIView.animate(withDuration: 0.2, delay: 0.0, options: .curveEaseInOut, animations: {
+                frame.origin.y = UIScreen.main.bounds.height
+                self.self.frame = frame
+                self.alpha = AlphaRange.min
+                self.backgroundColor = .black
+                self.labels.forEach { $0.textColor = .white }
+                self.state = .exit
+            })
+        default:
+            break
         }
     }
     

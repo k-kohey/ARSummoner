@@ -26,6 +26,18 @@ final class ViewController: UIViewController{
         return view
     }()
     
+    private lazy var cameraButton: UIButton = {
+        let y = self.view.frame.height * 0.85
+        let button = UIButton(frame: CGRect(x: 0, y: y, width: 70, height: 70))
+        button.center.x = self.view.center.x
+        button.setBackgroundImage(UIImage(named: "cameraButton"), for: .normal)
+        button.alpha = 0.0
+        button.isEnabled = false
+        button.addTarget(self, action: #selector(takePhoto), for: .touchUpInside)
+        return button
+    }()
+    
+    // State Manager
     private struct Phase {
         enum Phase: Int, CaseIterable {
             case detection
@@ -65,13 +77,21 @@ final class ViewController: UIViewController{
         #endif
 
         view.addGestureRecognizer(tapPlaneGestuer)
+        view.addSubview(cameraButton)
         view.addSubview(instructionView)
         
         Phase.setAction(for: .detection) { [weak self] in
+            self?.cameraButton.alpha = 0.0
+            self?.cameraButton.isEnabled = false
+            self?.planes.forEach {
+                let material = SCNMaterial()
+                material.diffuse.contents = UIImage(named: "target")
+                $0.value.geometry?.firstMaterial = material
+            }
             DispatchQueue.main.async {
                 let contents: DisplayContents = (title: "召喚場所を選定", description: "端末を平な場所で横に振って\n召喚する領域<<ゲート>>をみつけよう.\nいい場所にゲートが出来たらタップ！")
                 self?.instructionView.setDisplayContents(contents)
-                
+                self?.instructionView.translate(to: .closed)
             }
         }
         
@@ -83,9 +103,12 @@ final class ViewController: UIViewController{
         }
         
         Phase.setAction(for: .takePhoto) { [weak self] in
+            self?.cameraButton.alpha = 1.0
+            self?.cameraButton.isEnabled = true
             DispatchQueue.main.async {
                 let contents: DisplayContents = (title: "さあ，写真を撮ろう", description: "召喚成功を祝福し，その瞬間をフレームに残そう\n撮影した写真はSNSでシェア出来るよ．")
                 self?.instructionView.setDisplayContents(contents)
+                self?.instructionView.translate(to: .exit)
             }
         }
     }
@@ -103,11 +126,56 @@ final class ViewController: UIViewController{
         sceneView.session.pause()
     }
     
-    private func takePhoto() {
+    @objc private func takePhoto() {
+        planes.forEach {
+            let material = SCNMaterial()
+            material.diffuse.contents = UIColor.clear
+            $0.value.geometry?.firstMaterial = material
+        }
+        
         UIImageWriteToSavedPhotosAlbum(sceneView.snapshot(),
                                        self,
                                        #selector(self.didFinishSavingImage(_:didFinishSavingWithError:contextInfo:)),
                                        nil)
+        
+        DispatchQueue.main.async {
+            let whiteOutView = UIView(frame: self.view.frame)
+            whiteOutView.backgroundColor = .white
+            whiteOutView.alpha = 0.75
+            self.view.addSubview(whiteOutView)
+            AudioServicesPlaySystemSound(1108)
+            
+            UIView.animate(withDuration: 0.15, animations: {
+                whiteOutView.alpha = 0.0
+            }){ _ in
+                whiteOutView.removeFromSuperview()
+            }
+        }
+        
+        Phase.next()
+    }
+    
+    func evokeTap() {
+//        DispatchQueue.main.async { [weak self] in
+//            guard let self = self else {return}
+//            let image = UIImage(named: "tapIcon")!
+//            let imageView = UIImageView(image: image)
+//            imageView.contentMode = .scaleAspectFit
+//            imageView.frame = CGRect(x: 0, y: 0, width: 100, height: 100)
+//            imageView.center = self.view.center
+//            self.view.addSubview(imageView)
+//
+//            UIView.animate(withDuration: 0.6, delay: 0.2, options: [.curveEaseInOut], animations: {
+//                imageView.center.y -= 30
+//                imageView.center.x += 10
+//            }) { _ in
+//                UIView.animate(withDuration: 0.4, animations: {
+//                    imageView.alpha = 0.0
+//                }){ _ in
+//                    imageView.removeFromSuperview()
+//                }
+//            }
+//        }
     }
     
     @objc func didFinishSavingImage(_ image: UIImage, didFinishSavingWithError error: NSError!, contextInfo: UnsafeMutableRawPointer) {
@@ -134,10 +202,11 @@ extension ViewController: ARSCNViewDelegate {
         let plane = PlaneNode(anchor: planeAnchor)
         node.addChildNode(plane)
         planes[planeAnchor] = plane
+        
+        evokeTap()
     }
     
     func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
-        if Phase.current != .detection { return }
         guard let planeAnchor = anchor as? ARPlaneAnchor else {fatalError()}
         let willRenderedPlane = planes[planeAnchor]
         willRenderedPlane?.update(anchor: planeAnchor)
@@ -164,7 +233,9 @@ extension ViewController: UIGestureRecognizerDelegate {
         //if Phase.current == .takePhoto { return }
         switch Phase.current {
         case .detection:
-            Phase.next()
+            if planes.count > 0 {
+                Phase.next()
+            }
         case .summons:
             let tapPoint = recognizer.location(in: sceneView)
             let results = sceneView.hitTest(tapPoint, types: .existingPlaneUsingExtent)
@@ -172,9 +243,7 @@ extension ViewController: UIGestureRecognizerDelegate {
             let panelNode = PanelFactory.create()
             planeNode.addChildNode(panelNode)
             Phase.next()
-        case .takePhoto:
-            takePhoto()
-            Phase.next()
+        default:
             return
         }
     }
