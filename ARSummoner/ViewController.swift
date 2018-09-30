@@ -7,8 +7,10 @@
 //
 
 import ARKit
+import ReactorKit
+import RxSwift
 
-final class ViewController: UIViewController, ARSCNViewDelegate{
+final class ViewController: UIViewController, StoryboardView{
     private lazy var tapPlaneGestuer: UITapGestureRecognizer = {
         let gestuer = UITapGestureRecognizer(target: self, action: #selector(didTappedScreen(_:)))
         gestuer.delegate = self
@@ -23,8 +25,8 @@ final class ViewController: UIViewController, ARSCNViewDelegate{
 
         return view
     }()
-
-    var oldInstructionViewY:CGFloat = 0.0
+    
+    var disposeBag = DisposeBag()
 
     @IBOutlet var sceneView: ARSCNView!
     private var planes: [ARPlaneAnchor: PlaneNode] = [:]
@@ -55,7 +57,13 @@ final class ViewController: UIViewController, ARSCNViewDelegate{
         super.viewWillDisappear(animated)
         sceneView.session.pause()
     }
+    
+    func bind(reactor: ViewReactor) {
+        
+    }
+}
 
+extension ViewController: ARSCNViewDelegate {
     func renderer(_ renderer: SCNSceneRenderer, didAdd node: SCNNode, for anchor: ARAnchor) {
         // Place content only for anchors found by plane detection.
         guard let planeAnchor = anchor as? ARPlaneAnchor else { return }
@@ -63,26 +71,26 @@ final class ViewController: UIViewController, ARSCNViewDelegate{
         node.addChildNode(plane)
         planes[planeAnchor] = plane
     }
-
+    
     func renderer(_ renderer: SCNSceneRenderer, didUpdate node: SCNNode, for anchor: ARAnchor) {
         guard let planeAnchor = anchor as? ARPlaneAnchor else {fatalError()}
         let willRenderedPlane = planes[planeAnchor]
         willRenderedPlane?.update(anchor: planeAnchor)
     }
-
+    
     func session(_ session: ARSession, didFailWithError error: Error) {
         // Present an error message to the user
-
+        
     }
-
+    
     func sessionWasInterrupted(_ session: ARSession) {
         // Inform the user that the session has been interrupted, for example, by presenting an overlay
-
+        
     }
-
+    
     func sessionInterruptionEnded(_ session: ARSession) {
         // Reset tracking and/or remove existing anchors if consistent tracking is required
-
+        
     }
 }
 

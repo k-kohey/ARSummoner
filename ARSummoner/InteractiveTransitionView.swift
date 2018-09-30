@@ -31,7 +31,7 @@ final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
         let LineSpaceStyle = NSMutableParagraphStyle()
         LineSpaceStyle.lineSpacing = CGFloat(1.6)
         let lineSpaceAttr = [NSAttributedString.Key.paragraphStyle: LineSpaceStyle]
-        label.text = "端末を横に振って\n四角形が丁度良い場所になったらタップしよう"
+        label.text = "端末を平な場所で横に振って\n召喚する領域をみつけよう"
         label.attributedText = NSMutableAttributedString(string: label.text!, attributes: lineSpaceAttr)
         labels.append(label)
         return label
