@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import SnapKit
 
 typealias DisplayContents = (title: String, description: String)
 
@@ -38,8 +39,25 @@ final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
         labels.append(label)
         return label
     }()
+    
+    private lazy var toDetectionButton: UIButton = {
+        let button = UIButton()
+        button.backgroundColor = .red
+        return button
+    }()
+    
+    private lazy var toSummonButton: UIButton = {
+        let button = UIButton()
+        return button
+    }()
+    
+    private lazy var toPhotoButton: UIButton = {
+        let button = UIButton()
+        return button
+    }()
 
     private var labels: [UILabel] = []
+    private var buttons: [UIButton] = []
 
     enum State {
         case opened
@@ -76,6 +94,10 @@ final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
         return view
 
     }()
+    
+    var didOpened: ()->() = {}
+    var didClosed: ()->() = {}
+    var didExit: ()->() = {}
 
 
     convenience init() {
@@ -90,6 +112,8 @@ final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
         addSubview(titleLabel)
         addSubview(descriptionLabel)
         addSubview(handleView)
+        
+        addSubview(toDetectionButton)
 
         alpha = AlphaRange.min
         layer.cornerRadius = 17.0
@@ -119,7 +143,12 @@ final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
 
             let previousState = state
             state = offset > 0 ? .closing : .opening
-            if !(previousState == .opened && state == .opening) && !(previousState == .closed && state == .closing){
+            
+            if previousState == .closed && state == .closing {
+                state = .exit
+                translate(to: .exit)
+            }
+            else if !(previousState == .opened && state == .opening) && !(previousState == .closed && state == .closing){
                 transform = transform.translatedBy(x: 0, y: move)
                 alpha -= move / superview.frame.height * 1.2
             }
@@ -128,7 +157,7 @@ final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
         }
 
 
-        if frame.origin.y > superview.frame.height * 0.35 && state == .closing {
+        if frame.origin.y > superview.frame.height * 0.25 && state == .closing {
             translate(to: .closed)
         }
         else if frame.origin.y < superview.frame.height * 0.65 && state == .opening {
@@ -138,35 +167,49 @@ final class InteractiveTransitionView: UIView, UIGestureRecognizerDelegate {
 
     func translate(to state: State) {
         guard let superview = superview else {return}
+        tapHandleGesturer.isEnabled = false
         var frame = self.frame
         switch state {
         case .opened:
-            UIView.animate(withDuration: 0.2, delay: 0.0, options: .curveEaseInOut, animations: {
+            UIView.animate(withDuration: 0.2, delay: 0.0, options: .curveEaseInOut, animations: {[weak self]  in
+                guard let self = self else {return}
                 frame.origin.y = (superview.frame.height) * 0.1
                 self.frame = frame
                 self.alpha = AlphaRange.max
                 self.backgroundColor = .white
                 self.labels.forEach { $0.textColor = .black }
                 self.state = .opened
-            })
+                self.didOpened()
+            }){ _ in
+                self.tapHandleGesturer.isEnabled = true
+            }
         case .closed:
-            UIView.animate(withDuration: 0.2, delay: 0.0, options: .curveEaseInOut, animations: {
+            UIView.animate(withDuration: 0.2, delay: 0.0, options: .curveEaseInOut, animations: {[weak self]  in
+                guard let self = self else {return}
                 frame.origin.y = (superview.frame.height) * 0.8
-                self.self.frame = frame
+                self.frame = frame
                 self.alpha = AlphaRange.min
                 self.backgroundColor = .black
                 self.labels.forEach { $0.textColor = .white }
                 self.state = .closed
-            })
+                self.didClosed()
+            }){ _ in
+                self.tapHandleGesturer.isEnabled = true
+            }
+        
         case .exit:
-            UIView.animate(withDuration: 0.2, delay: 0.0, options: .curveEaseInOut, animations: {
+            UIView.animate(withDuration: 0.2, delay: 0.0, options: .curveEaseInOut, animations: { [weak self]  in
+                guard let self = self else {return}
                 frame.origin.y = UIScreen.main.bounds.height
-                self.self.frame = frame
+                self.frame = frame
                 self.alpha = AlphaRange.min
                 self.backgroundColor = .black
                 self.labels.forEach { $0.textColor = .white }
                 self.state = .exit
-            })
+                self.didExit()
+            }){ _ in
+                self.tapHandleGesturer.isEnabled = true
+            }
         default:
             break
         }

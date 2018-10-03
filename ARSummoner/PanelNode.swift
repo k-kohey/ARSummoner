@@ -8,14 +8,17 @@
 
 import SceneKit
 
-enum PanelType {
+enum PanelType: CaseIterable {
     case otaoA
+    case otaoB
     case zozoOssan
 
     var image: UIImage {
         switch self {
         case .otaoA:
-            return UIImage(named: "otao")!
+            return UIImage(named: "otaoA")!
+        case .otaoB:
+            return UIImage(named: "otaoB")!
         case .zozoOssan:
             return UIImage(named: "zozoOssan")!
         }
@@ -24,9 +27,11 @@ enum PanelType {
     var size: CGSize {
         switch self {
         case .otaoA:
-            return CGSize(width: 1.76  * (127 / 262), height: 1.76)
+            return CGSize(width: 1.76  * (576 / 1983), height: 1.76)
+        case .otaoB:
+            return CGSize(width: 1.74  * (606 / 1314), height: 1.74)
         case .zozoOssan:
-            return CGSize(width: 1.76  * (1296 / 3910), height: 1.76)
+            return CGSize(width: 1.76  * (558 / 1984), height: 1.76)
         }
     }
 
@@ -34,13 +39,11 @@ enum PanelType {
         switch self {
         case .otaoA:
             return SCNAudioSource(named: "summon.wav")!
+        case .otaoB:
+            return SCNAudioSource(named: "summon.wav")!
         case .zozoOssan:
             return SCNAudioSource(named: "hello.m4a")!
         }
-    }
-
-    static var allCases: [PanelType] {
-        return [.otaoA, .zozoOssan]
     }
 }
 

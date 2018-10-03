@@ -14,14 +14,15 @@ enum PanelFactory {
         // createはcloneしたものを返す．
     }
 
-    static func create() -> PanelNode{
+    static func create(on position: SCNVector3) -> PanelNode{
         let allCases = PanelType.allCases
         let random = arc4random_uniform(UInt32(allCases.count))
         let material = allCases[Int(random)]
         let panelNode = PanelNode(material: material)
         let audioSouce = material.resultSound
         panelNode.runAction(SCNAction.playAudio(audioSouce, waitForCompletion: true))
-        panelNode.position.y += Float(material.size.height / 2)
+        panelNode.position = position
+        panelNode.position.y = Float(material.size.height / 2)
         return panelNode
     }
 
