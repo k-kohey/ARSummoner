@@ -8,6 +8,35 @@
 
 import ARKit
 
+// State Manager
+struct Phase {
+    enum Phase: Int, CaseIterable {
+        case detection
+        case summons
+        case takePhoto
+    }
+    
+    static var action: [Phase: ()->()] = [:]
+    
+    static var current: Phase = .detection {
+        didSet {
+            action[current]?()
+        }
+    }
+    
+    static func next() {
+        let allPhase = Phase.allCases
+        current = allPhase[(current.rawValue + 1) % allPhase.count]
+    }
+    
+    static func setAction(for phase: Phase, action: @escaping () -> ()) {
+        self.action[phase] = action
+        
+        // if initial state, run
+        phase.rawValue == 0 ? action() : ()
+    }
+}
+
 typealias Planes = [ARPlaneAnchor: PlaneNode]
 
 final class ViewController: UIViewController{
@@ -47,38 +76,14 @@ final class ViewController: UIViewController{
         button.isEnabled = false
         return button
     }()
-    
-    // State Manager
-    private struct Phase {
-        enum Phase: Int, CaseIterable {
-            case detection
-            case summons
-            case takePhoto
-        }
-        
-        static var action: [Phase: ()->()] = [:]
-        
-        static var current: Phase = .detection
-        
-        static func next() {
-            let allPhase = Phase.allCases
-            current = allPhase[(current.rawValue + 1) % allPhase.count]
-            action[current]?()
-        }
-        
-        static func setAction(for phase: Phase, action: @escaping () -> ()) {
-            self.action[phase] = action
-            
-            // if initial state, run
-            phase.rawValue == 0 ? action() : ()
-        }
-    }
 
     @IBOutlet var sceneView: ARSCNView!
     private var planes: Planes = [:]
 
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        instructionView.resetButton.addTarget(self, action: #selector(restPlanes), for: .touchUpInside)
         
         uiviewSetup: do {
             view.addGestureRecognizer(tapPlaneGestuer)
@@ -114,7 +119,7 @@ final class ViewController: UIViewController{
         Phase.setAction(for: .detection) { [weak self] in
             invisibleAction()
             DispatchQueue.main.async {
-                let contents: DisplayContents = (title: "召喚場所を選定", description: "端末を平な場所で横に振って\n召喚する領域<<ゲート>>をみつけよう.\nいい場所にゲートが出来たらタップ！")
+                let contents: DisplayContents = (title: "1. 召喚場所を選定", description: "端末を平な場所で横に振って\n召喚する領域<<ゲート>>をみつけよう.\nいい場所にゲートが出来たらタップ！")
                 self?.instructionView.setDisplayContents(contents)
                 self?.instructionView.translate(to: .closed)
             }
@@ -122,7 +127,7 @@ final class ViewController: UIViewController{
         
         Phase.setAction(for: .summons) { [weak self] in
             DispatchQueue.main.async {
-                let contents: DisplayContents = (title: "召喚を開始する", description: "地面に現れた召喚ゲートをタップして\n召喚を開始してみよう！！")
+                let contents: DisplayContents = (title: "2. 召喚を開始する", description: "地面に現れた召喚ゲートをタップして\n召喚を開始してみよう！！")
                 self?.instructionView.setDisplayContents(contents)
             }
         }
@@ -130,7 +135,7 @@ final class ViewController: UIViewController{
         Phase.setAction(for: .takePhoto) { [weak self] in
             visibleAction()
             DispatchQueue.main.async {
-                let contents: DisplayContents = (title: "さあ，写真を撮ろう", description: "召喚成功を祝福し，その瞬間をフレームに残そう\n撮影した写真はSNSでシェア出来るよ．")
+                let contents: DisplayContents = (title: "3. さあ，写真を撮ろう", description: "召喚成功を祝福し，その瞬間をフレームに残そう\n撮影した写真はSNSでシェア出来るよ．")
                 self?.instructionView.setDisplayContents(contents)
                 self?.instructionView.translate(to: .exit)
             }
@@ -238,6 +243,11 @@ final class ViewController: UIViewController{
     @objc func didTappedTopArrow() {
         instructionView.translate(to: .opened)
     }
+    
+    @objc func restPlanes() {
+        sceneView.scene.rootNode.childNodes.forEach { $0.removeFromParentNode() }
+        Phase.current = .detection
+    }
 }
 
 extension ViewController: ARSCNViewDelegate {
@@ -288,7 +298,7 @@ extension ViewController: UIGestureRecognizerDelegate {
             guard let hitResult = results.first, let hitPlaneAnchor = hitResult.anchor as? ARPlaneAnchor, let planeNode = planes[hitPlaneAnchor] else { return }
             let panelPosition = SCNVector3(hitResult.worldTransform.columns.3.x, hitResult.worldTransform.columns.3.y, hitResult.worldTransform.columns.3.z)
             let panelNode = PanelFactory.create(on: panelPosition)
-            planeNode.addChildNode(panelNode)
+            sceneView.scene.rootNode.addChildNode(panelNode)
             Phase.next()
         default:
             return

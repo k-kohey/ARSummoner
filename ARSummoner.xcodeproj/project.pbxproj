@@ -21,6 +21,8 @@
 		1BB620432155C0E500D6DB48 /* hello.m4a in Resources */ = {isa = PBXBuildFile; fileRef = 1BB620422155C0E500D6DB48 /* hello.m4a */; };
 		1BB620452155CC9D00D6DB48 /* HandleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 1BB620442155CC9D00D6DB48 /* HandleView.swift */; };
 		BDF9F168EA1860A377AD6FD7 /* Pods_ARSummoner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E4E605169E4285538B405EE0 /* Pods_ARSummoner.framework */; };
+		EF22D413216937A500FCE8E9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = EF22D412216937A500FCE8E9 /* GoogleService-Info.plist */; };
+		EFBC827D21653872000DAC79 /* FrameExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = EFBC827C21653872000DAC79 /* FrameExtension.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -42,6 +44,8 @@
 		39BB5370542A3C8DDDE15E9C /* Pods-ARSummoner.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ARSummoner.debug.xcconfig"; path = "Pods/Target Support Files/Pods-ARSummoner/Pods-ARSummoner.debug.xcconfig"; sourceTree = "<group>"; };
 		48F154F6AC09B6CC8A924CA1 /* Pods-ARSummoner.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ARSummoner.release.xcconfig"; path = "Pods/Target Support Files/Pods-ARSummoner/Pods-ARSummoner.release.xcconfig"; sourceTree = "<group>"; };
 		E4E605169E4285538B405EE0 /* Pods_ARSummoner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ARSummoner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EF22D412216937A500FCE8E9 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
+		EFBC827C21653872000DAC79 /* FrameExtension.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FrameExtension.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -59,6 +63,7 @@
 		1B9B9A4C2152F6D30001747D = {
 			isa = PBXGroup;
 			children = (
+				EF22D412216937A500FCE8E9 /* GoogleService-Info.plist */,
 				1B9B9A572152F6D30001747D /* ARSummoner */,
 				1B9B9A562152F6D30001747D /* Products */,
 				FCD1B10CDE6E2C6347A032F1 /* Pods */,
@@ -85,6 +90,7 @@
 				1B9B9A5C2152F6D30001747D /* ViewController.swift */,
 				1BB620442155CC9D00D6DB48 /* HandleView.swift */,
 				1B757EC72154823F000B13D6 /* InteractiveTransitionView.swift */,
+				EFBC827C21653872000DAC79 /* FrameExtension.swift */,
 				1B757EC1215422B4000B13D6 /* PanelNode.swift */,
 				1BB620402155B7A300D6DB48 /* PanelFactory.swift */,
 				1B9B9A5E2152F6D30001747D /* Main.storyboard */,
@@ -178,6 +184,7 @@
 				1B757EC021530508000B13D6 /* summon.wav in Resources */,
 				1B9B9A622152F6D90001747D /* Assets.xcassets in Resources */,
 				1B9B9A602152F6D30001747D /* Main.storyboard in Resources */,
+				EF22D413216937A500FCE8E9 /* GoogleService-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -193,13 +200,15 @@
 			);
 			inputPaths = (
 				"${SRCROOT}/Pods/Target Support Files/Pods-ARSummoner/Pods-ARSummoner-frameworks.sh",
-				"${BUILT_PRODUCTS_DIR}/SnapKit/SnapKit.framework",
+				"${BUILT_PRODUCTS_DIR}/GoogleUtilities/GoogleUtilities.framework",
+				"${BUILT_PRODUCTS_DIR}/nanopb/nanopb.framework",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputFileListPaths = (
 			);
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/SnapKit.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/GoogleUtilities.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/nanopb.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
@@ -242,6 +251,7 @@
 				1B9B9A5D2152F6D30001747D /* ViewController.swift in Sources */,
 				1B9B9A6D2152F7FC0001747D /* PlaneNode.swift in Sources */,
 				1B9B9A592152F6D30001747D /* AppDelegate.swift in Sources */,
+				EFBC827D21653872000DAC79 /* FrameExtension.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
