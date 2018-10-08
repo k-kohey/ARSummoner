@@ -39,7 +39,8 @@ struct Phase {
 
 typealias Planes = [ARPlaneAnchor: PlaneNode]
 
-final class ARViewController: UIViewController{
+final class
+ARViewController: UIViewController{
     private lazy var tapPlaneGestuer: UITapGestureRecognizer = {
         let gestuer = UITapGestureRecognizer(target: self, action: #selector(didTappedScreen(_:)))
         gestuer.delegate = self
@@ -226,7 +227,7 @@ final class ARViewController: UIViewController{
         }
         else {
             alertController.addAction(UIAlertAction(title: "シェアする", style: .default, handler: { [weak self]_ in
-                let activityVC = UIActivityViewController(activityItems: ["大峠なう #AR_Otao", image], applicationActivities: nil)
+                let activityVC = UIActivityViewController(activityItems: ["大峠なう #ARotao", image], applicationActivities: nil)
                 let excludedActivityTypes: [UIActivity.ActivityType] = []
                 activityVC.excludedActivityTypes = excludedActivityTypes
                 

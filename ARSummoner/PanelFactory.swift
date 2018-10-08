@@ -29,10 +29,10 @@ enum PanelFactory {
             else if (31...70).contains(i) {
                 distribution.append(.otaoB)
             }
-            else if (71...80).contains(i) {
+            else if (71...85).contains(i) {
                 distribution.append(.kirin)
             }
-            else if (81...100).contains(i) {
+            else if (86...100).contains(i) {
                 distribution.append(.zozoOssan)
             }
         }
