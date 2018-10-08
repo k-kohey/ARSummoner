@@ -296,7 +296,7 @@ extension ViewController: UIGestureRecognizerDelegate {
         case .summons:
             let tapPoint = recognizer.location(in: sceneView)
             let results = sceneView.hitTest(tapPoint, types: .existingPlaneUsingExtent)
-            guard let hitResult = results.first, let hitPlaneAnchor = hitResult.anchor as? ARPlaneAnchor, let planeNode = planes[hitPlaneAnchor] else { return }
+            guard let hitResult = results.first else { return }
             let panelPosition = SCNVector3(hitResult.worldTransform.columns.3.x, hitResult.worldTransform.columns.3.y, hitResult.worldTransform.columns.3.z)
             let panelNode = PanelFactory.create(on: panelPosition)
             sceneView.scene.rootNode.addChildNode(panelNode)
