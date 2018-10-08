@@ -246,6 +246,7 @@ final class ViewController: UIViewController{
     
     @objc func restPlanes() {
         sceneView.scene.rootNode.childNodes.forEach { $0.removeFromParentNode() }
+        planes.removeAll()
         Phase.current = .detection
     }
 }
