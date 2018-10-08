@@ -39,8 +39,7 @@ struct Phase {
 
 typealias Planes = [ARPlaneAnchor: PlaneNode]
 
-final class
-ARViewController: UIViewController{
+final class ARViewController: UIViewController{
     private lazy var tapPlaneGestuer: UITapGestureRecognizer = {
         let gestuer = UITapGestureRecognizer(target: self, action: #selector(didTappedScreen(_:)))
         gestuer.delegate = self
